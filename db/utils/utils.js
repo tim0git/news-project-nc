@@ -3,7 +3,7 @@ exports.formatDates = (list) => {
     comment.created_at = new Date(comment.created_at);
   });
   return list;
-};
+}; // not pure needs a refactor
 
 exports.makeRefObj = (list, key, value) => {
   const lookupObj = {};
@@ -32,4 +32,4 @@ exports.renameKey = (list, keyToRename, newKey) => {
     delete comment[keyToRename];
   });
   return list;
-};
+}; // not pure needs refactor
