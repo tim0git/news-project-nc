@@ -40,4 +40,4 @@ exports.seed = function (knex) {
       console.log(formattedDate);
       return knex("comments").insert(formattedDate);
     });
-};
+}; // seeds both test & dev data

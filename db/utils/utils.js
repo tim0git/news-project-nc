@@ -1,9 +1,14 @@
-exports.formatDates = (list) => {
-  list.forEach((comment) => {
+exports.formatDates = (myArray) => {
+  const newArr = [];
+  // create copy of array
+  for (let i in myArray) {
+    newArr.push({ ...myArray[i] });
+  }
+  newArr.forEach((comment) => {
     comment.created_at = new Date(comment.created_at);
   });
-  return list;
-}; // not pure needs a refactor
+  return newArr;
+}; // done & pure
 
 exports.makeRefObj = (list, key, value) => {
   const lookupObj = {};
@@ -11,7 +16,7 @@ exports.makeRefObj = (list, key, value) => {
     lookupObj[row[key]] = row[value];
   });
   return lookupObj;
-};
+}; // done & pure
 
 exports.formatComments = (
   commentsData,
@@ -24,12 +29,17 @@ exports.formatComments = (
     return { [keyToCreate]: lookupObj[key], ...restOfKeys };
   });
   return formattedShops;
-};
+}; // done & pure
 
-exports.renameKey = (list, keyToRename, newKey) => {
-  list.forEach((comment) => {
+exports.renameKey = (myArray, keyToRename, newKey) => {
+  const newArr = [];
+  // create copy of array
+  for (let i in myArray) {
+    newArr.push({ ...myArray[i] });
+  }
+  newArr.forEach((comment) => {
     comment[newKey] = comment[keyToRename];
     delete comment[keyToRename];
   });
-  return list;
-}; // not pure needs refactor
+  return newArr;
+}; // done & pure
