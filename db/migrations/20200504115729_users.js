@@ -1,9 +1,9 @@
 exports.up = function (knex) {
   console.log("create users");
   return knex.schema.createTable("users", (usersTable) => {
-    usersTable.text("username").primary().unique("username");
-    usersTable.text("avatar_url");
-    usersTable.text("name");
+    usersTable.text("username").primary().notNullable();
+    usersTable.text("avatar_url").notNullable();
+    usersTable.text("name").notNullable();
   });
 };
 

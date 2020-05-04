@@ -11,6 +11,24 @@ If you need extra guidance refer back to your schema in the migrations files and
 This utility function should be able to take an array (`list`) of objects and return a new array. Each item in the new array must have its timestamp converted into a Javascript date object. Everything else in each item must be maintained.
 
 _hint: Think carefully about how you can test that this has worked - it's not by copying and pasting a sql timestamp from the terminal into your test_
+input:
+{
+  body:
+    'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+  belongs_to: 'Living in the shadow of a great man',
+  created_by: 'butter_bridge',
+  votes: 14,
+  created_at: 1479818163389,
+}
+output:
+{
+  body:
+    'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+  belongs_to: 'Living in the shadow of a great man',
+  created_by: 'butter_bridge',
+  votes: 14,
+  created_at: 1479818163389,
+}
 
 ---
 
