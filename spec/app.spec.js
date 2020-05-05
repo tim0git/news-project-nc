@@ -9,6 +9,27 @@ afterAll(() => connection.destroy());
 
 describe("app", () => {
   describe("/api", () => {
+    describe("GET /api", () => {
+      test("return a JSON Object with available routes", () => {
+        return request(app)
+          .get("/api")
+          .expect(404)
+          .then((result) => {
+            expect(result.body.availableRoutes).toEqual({
+              GET: "/api/topics",
+              GET: "/api/users/:username",
+              GET: "/api/articles/:article_id",
+              GET: "/api/articles/:article_id/comments",
+              GET: "/api/articles",
+              GET: "/api",
+              PATCH: "/api/articles/:article_id",
+              PATCH: "/api/comments/:comment_id",
+              POST: "/api/articles/:article_id/comments",
+              DELETE: "/api/comments/:comment_id",
+            });
+          });
+      });
+    });
     describe("/topics", () => {
       describe("GET", () => {
         test("expect GET /api/users to return 200", () => {

@@ -1,6 +1,6 @@
 exports.send404 = (req, res, next) => {
   console.log("unknown path error");
-  res.status(404).send({
+  res.status(404).send({availableRoutes:{
     GET: "/api/topics",
     GET: "/api/users/:username",
     GET: "/api/articles/:article_id",
@@ -11,7 +11,7 @@ exports.send404 = (req, res, next) => {
     PATCH: "/api/comments/:comment_id",
     POST: "/api/articles/:article_id/comments",
     DELETE: "/api/comments/:comment_id",
-  });
+  }});
 };
 
 exports.handlePSQLError = (err, req, res, next) => {
