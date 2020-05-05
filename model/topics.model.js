@@ -5,6 +5,6 @@ exports.selectAllTopics = () => {
     .select("*")
     .from("topics")
     .then((result) => {
-      return result
+      return result;
     });
 };

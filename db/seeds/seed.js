@@ -37,11 +37,10 @@ exports.seed = function (knex) {
         commentData,
         articleRef,
         "belongs_to",
-        "comment_id"
+        "article_id"
       );
       const formattedKey = renameKey(formattedComments, "created_by", "author");
       const formattedDate = formatDates(formattedKey);
-      console.log(formattedDate);
       return knex("comments").insert(formattedDate);
     });
 }; // seeds both test & dev data
