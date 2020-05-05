@@ -8,7 +8,7 @@
     "seed-test": "NODE_ENV=test knex seed:run",
     "seed-dev": "NODE_ENV=development knex seed:run",
     "test-utils": "jest spec/utils.spec.js",
-    "test": "jest --watch spec/utils.spec.js",
+    "test": "jest --watch spec/app.spec.js",
     "migration": "knex migrate:make",
     "latest-test": "NODE_ENV=test knex migrate:latest",
     "rollback-test": "NODE_ENV=test knex migrate:rollback",
