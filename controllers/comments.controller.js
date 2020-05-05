@@ -29,14 +29,18 @@ exports.getCommentById = (req, res, next) => {
 exports.patchCommentById = (req, res, next) => {
   const { comment_id } = req.params;
   const { inc_votes } = req.body;
-  incrementCommentById(comment_id, inc_votes).then((result) => {
-    res.status(200).send({ comment: result });
-  });
+  incrementCommentById(comment_id, inc_votes)
+    .then((result) => {
+      res.status(200).send({ comment: result });
+    })
+    .catch(next);
 };
 
 exports.deleteCommentById = (req, res, next) => {
   const { comment_id } = req.params;
-  delCommentById(comment_id).then((result) => {
-    res.status(result.status).send({result: result});
-  });
+  delCommentById(comment_id)
+    .then((result) => {
+      res.status(result.status).send({ result: result });
+    })
+    .catch(next);
 };

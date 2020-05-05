@@ -45,3 +45,5 @@ exports.selectAllArticles = (sort_by, order = "desc", author, topic) => {
       return result;
     });
 };
+// possible repitition with selectArticleById refcator to maintain DRY principle.
+// cannot refactor due to article_id in selectArticleById.
