@@ -30,6 +30,8 @@ exports.selectCommentById = (
 };
 
 exports.incrementCommentById = (comment_id, inc_votes = 0) => {
+if (inc_votes === 0) return Promise.reject({ status: 400, msg: "bad request" });
+
   return knex("comments")
     .where("comments.comment_id", comment_id)
     .increment("votes", inc_votes)

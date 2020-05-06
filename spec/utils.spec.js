@@ -5,8 +5,6 @@ const {
   renameKey,
 } = require("../db/utils/utils");
 
-const moment = require("moment");
-
 describe("formatDates", () => {
   test("returns an array when passed one", () => {
     expect(formatDates([])).toEqual([]);

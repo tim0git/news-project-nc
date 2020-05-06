@@ -553,7 +553,10 @@ describe("app", () => {
 
       describe("PATCH /comments/:comment_id", () => {
         test("resonds with 200 okay", () => {
-          return request(app).patch("/api/comments/1").expect(200);
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: 1 })
+            .expect(200);
         });
         test("expect comment to be returned with the following keys", () => {
           return request(app)
@@ -591,7 +594,35 @@ describe("app", () => {
               expect(result.body.msg).toBe("resource not found");
             });
         });
+        test("ERROR when passed incorrect body returns 400 bad request", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ incvotes: 1 })
+            .expect(400)
+            .then((result) => {
+              expect(result.body.msg).toBe("bad request");
+            });
+        });
+        test("ERROR when passed incorrect body returns 400 bad request", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: "z" })
+            .expect(400)
+            .then((result) => {
+              expect(result.body.message).toBe("resource not found");
+            });
+        });
+        test("ERROR when passed incorrect body returns 400 bad request", () => {
+          return request(app)
+            .patch("/api/comments/1")
+            .send({ inc_votes: 1, dave: 1 })
+            .expect(400)
+            .then((result) => {
+              expect(result.body.msg).toBe("bad request");
+            });
+        });
       });
+
       describe("DELETE", () => {
         test("returns 204 and no content", () => {
           return request(app)
