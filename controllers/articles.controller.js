@@ -15,7 +15,9 @@ exports.getArticleById = (req, res, next) => {
 
 exports.patchArticleById = (req, res, next) => {
   const { article_id } = req.params;
-  const { inc_votes } = req.body;
+  let { inc_votes } = req.body;
+  if (Object.keys(req.body).length > 1) inc_votes = 0; //ensure that the object is correctly formatted
+
   updateArticleById(article_id, inc_votes)
     .then((result) => {
       res.status(200).send({ article: result });

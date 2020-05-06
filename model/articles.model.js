@@ -18,6 +18,8 @@ exports.selectArticleById = (article_id) => {
 };
 
 exports.updateArticleById = (article_id, inc_votes = 0) => {
+  if (inc_votes === 0) return Promise.reject({ status: 400, msg: "bad request" });
+  
   return knex("articles")
     .where("articles.article_id", article_id)
     .increment("votes", inc_votes)
@@ -33,7 +35,12 @@ exports.updateArticleById = (article_id, inc_votes = 0) => {
     });
 };
 
-exports.selectAllArticles = (sort_by = 'article_id', order = "desc", author, topic) => {
+exports.selectAllArticles = (
+  sort_by = "article_id",
+  order = "desc",
+  author,
+  topic
+) => {
   if (
     sort_by === "article_id" ||
     sort_by === "created_at" ||
@@ -61,10 +68,10 @@ exports.selectAllArticles = (sort_by = 'article_id', order = "desc", author, top
             : result;
         });
     } else {
-      return Promise.reject({ status: 404, msg: "bad request" });
+      return Promise.reject({ status: 404, msg: "bad request" }); // bad request for orderBy
     }
   } else {
-    return Promise.reject({ status: 404, msg: "bad request" });
+    return Promise.reject({ status: 404, msg: "bad request" }); // bad request for sort_by
   }
 };
 // possible repitition with selectArticleById refcator to maintain DRY principle.

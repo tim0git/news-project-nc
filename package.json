@@ -29,14 +29,13 @@
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "jest-sorted": "^1.0.6",
     "knex": "^0.21.1",
-    "moment": "^2.25.2",
-    "pg": "^8.0.3",
-    "supertest": "^4.0.2"
+    "pg": "^8.0.3"
   },
   "devDependencies": {
-    "jest": "^25.5.4"
+    "jest": "^25.5.4",
+    "jest-sorted": "^1.0.6",
+    "supertest": "^4.0.2"
   },
   "jest": {
     "setupFilesAfterEnv": [
