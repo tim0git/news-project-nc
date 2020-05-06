@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
+    "start": "node listen.js",
     "seed-test": "NODE_ENV=test knex seed:run",
     "seed-dev": "NODE_ENV=development knex seed:run",
     "test-utils": "jest spec/utils.spec.js",
@@ -14,7 +15,10 @@
     "rollback-test": "NODE_ENV=test knex migrate:rollback",
     "latest-dev": "NODE_ENV=development knex migrate:latest",
     "rollback-dev": "NODE_ENV=development knex migrate:rollback",
-    "sql-text": "psql -f query.sql > query.txt"
+    "sql-text": "psql -f query.sql > query.txt",
+    "seed:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex seed:run",
+    "migrate-latest:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:latest",
+    "migrate-rollback:prod": "NODE_ENV=production DB_URL=$(heroku config:get DATABASE_URL) knex migrate:rollback"
   },
   "repository": {
     "type": "git",
