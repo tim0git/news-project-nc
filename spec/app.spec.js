@@ -56,6 +56,40 @@ describe("app", () => {
         });
         // end of topics/ GET
       });
+      describe("ERRORS /topics", () => {
+        test("POST /api/topics", () => {
+          return request(app)
+            .post("/api/topics")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test("PATCH /api/topics", () => {
+          return request(app)
+            .patch("/api/topics")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test("DELETE/api/topics", () => {
+          return request(app)
+            .del("/api/topics")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test("GET /api/topicz Incorrect Path Spelling Error", () => {
+          return request(app)
+            .get("/api/topicz")
+            .expect(404)
+            .then((result) => {
+              expect(result.res.statusMessage).toBe("Not Found");
+            });
+        });
+      });
       // end of /topics
     });
     describe("/users", () => {
@@ -94,6 +128,40 @@ describe("app", () => {
             });
         });
         // end of /users GET
+      });
+      describe("ERRORS /users/:username", () => {
+        test("POST /users/:username", () => {
+          return request(app)
+            .post("/api/users/butter_bridge")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test("PATCH /users/:username", () => {
+          return request(app)
+            .patch("/api/users/butter_bridge")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test("DELETE /users/:username", () => {
+          return request(app)
+            .del("/api/users/butter_bridge")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test("expect GET wong username to return 404 resource not found", () => {
+          return request(app)
+            .get("/api/users/butter_brid")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("resource not found");
+            });
+        });
       });
       // end of /users
     });
@@ -138,6 +206,14 @@ describe("app", () => {
               });
             });
         });
+        test("when passed an incorrect Id return 404 resource not found", () => {
+          return request(app)
+            .get("/api/articles/999")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("resource not found");
+            });
+        });
         // end of article GET
       });
       describe("PATCH /:article_id", () => {
@@ -173,6 +249,15 @@ describe("app", () => {
               result.body.article.forEach((individual) => {
                 expect(individual.votes).toBe(101);
               });
+            });
+        });
+        test("ERROR when passed incorrect Id returns 404 resource not found", () => {
+          return request(app)
+            .patch("/api/articles/999")
+            .send({ inc_votes: 1 })
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("resource not found");
             });
         });
       });
@@ -235,7 +320,78 @@ describe("app", () => {
               });
             });
         });
+        test("ERROR when passed incorrect author responds with 404 resource not found", () => {
+          return request(app)
+            .get("/api/articles?author=notKnown")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("resource not found");
+            });
+        });
+        test("ERROR when passed incorrect topic responds with 404 resource not found", () => {
+          return request(app)
+            .get("/api/articles?topic=notKnown")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("resource not found");
+            });
+        });
+        test("ERROR order by incorrect term", () => {
+          return request(app)
+            .get("/api/articles?sort_by=author&order=down")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("bad request");
+            });
+        });
+        test("ERROR sort by incorrect term", () => {
+          return request(app)
+            .get("/api/articles?sort_by=mansion")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("bad request");
+            });
+        });
+        test("ERROR when passed incorrect path responds with list of available paths", () => {
+          return request(app)
+            .get("/api/articlez")
+            .expect(404)
+            .then((result) => {
+              expect(result.body).toEqual({
+                availableRoutes: {
+                  GET: "/api/topics",
+                  GET: "/api/users/:username",
+                  GET: "/api/articles/:article_id",
+                  GET: "/api/articles/:article_id/comments",
+                  GET: "/api/articles",
+                  GET: "/api",
+                  PATCH: "/api/articles/:article_id",
+                  PATCH: "/api/comments/:comment_id",
+                  POST: "/api/articles/:article_id/comments",
+                  DELETE: "/api/comments/:comment_id",
+                },
+              });
+            });
+        });
         // end of GET
+      });
+      describe("ERRORS /:article_id", () => {
+        test('POST "/:article_id"', () => {
+          return request(app)
+            .post("/api/articles/:article_id")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test('DELETE "/:article_id"', () => {
+          return request(app)
+            .del("/api/articles/:article_id")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
       });
       // end of /articles
     });
@@ -261,6 +417,15 @@ describe("app", () => {
                 expect(comment).toHaveProperty("body");
                 expect(comment).toHaveProperty("created_at");
               });
+            });
+        });
+        test("ERROR when passed an incorrect username returns 400 bad request", () => {
+          return request(app)
+            .post("/api/articles/1/comments")
+            .send({ username: "lurke", body: "lorem10" })
+            .expect(400)
+            .then((result) => {
+              expect(result.body.message).toBe("bad request");
             });
         });
         // end of POST
@@ -312,8 +477,53 @@ describe("app", () => {
               });
             });
         });
+        test("ERROR when passed incorrect article_id returns 404 resource not found", () => {
+          return request(app)
+            .get("/api/articles/99")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("resource not found");
+            });
+        });
         // end of GET
       });
+      describe("ERRORS /:article_id/comments", () => {
+        test('PATCH "/:article_id/comments"', () => {
+          return request(app)
+            .patch("/api/articles/:article_id/comments")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test('DELETE "/:article_id/comments"', () => {
+          return request(app)
+            .del("/api/articles/:article_id/comments")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+      });
+      describe("ERRORS /comments/:comment_id", () => {
+        test("POST /api/comments/:comment_id", () => {
+          return request(app)
+            .post("/api/comments/4")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+        test("GET /api/comments/:comment_id", () => {
+          return request(app)
+            .get("/api/comments/4")
+            .expect(405)
+            .then((result) => {
+              expect(result.body.msg).toBe("method not allowed");
+            });
+        });
+      });
+
       describe("PATCH /comments/:comment_id", () => {
         test("resonds with 200 okay", () => {
           return request(app).patch("/api/comments/1").expect(200);
@@ -345,6 +555,15 @@ describe("app", () => {
               });
             });
         });
+        test("ERROR when passed an incorrect id returns 404 resource not found", () => {
+          return request(app)
+            .patch("/api/comments/99")
+            .send({ inc_votes: 1 })
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("resource not found");
+            });
+        });
       });
       describe("DELETE", () => {
         test("returns 204 and no content", () => {
@@ -355,7 +574,16 @@ describe("app", () => {
               expect(result.res.statusMessage).toBe("No Content");
             });
         });
+        test("ERROR incorrect username returns 400 not found", () => {
+          return request(app)
+            .del("/api/comments/z")
+            .expect(400)
+            .then((result) => {
+              expect(result.body.message).toBe("resource not found");
+            });
+        });
       });
+      // end of DELETE
       // end of /comments
     });
     // end of /api

@@ -23,7 +23,9 @@ exports.selectCommentById = (
     .where("article_id", article_id)
     .orderBy(sort_by, order)
     .then((result) => {
-      return result;
+      return result.length < 1
+        ? Promise.reject({ status: 404, msg: "resource not found" })
+        : result;
     });
 };
 
@@ -37,18 +39,19 @@ exports.incrementCommentById = (comment_id, inc_votes = 0) => {
         .where("comments.comment_id", comment_id);
     })
     .then((result) => {
-      return result;
+      return result.length < 1
+        ? Promise.reject({ status: 404, msg: "resource not found" })
+        : result;
     });
 };
 
 exports.delCommentById = (comment_id) => {
   return knex("comments")
     .where("comment_id", comment_id)
-    .returning("*")
     .del()
     .then((results) => {
-      return results.length === 0
-        ? { status: 404, msg: "invalid syntax" }
-        : { status: 204, msg: "no content" };
+      return (results = 0
+        ? Promise.reject({ status: 404, msg: "invalid syntax" })
+        : { status: 204, msg: "no content" });
     });
 };
