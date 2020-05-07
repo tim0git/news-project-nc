@@ -323,20 +323,44 @@ describe("app", () => {
               });
             });
         });
+        test(" GET `/api/articles?topic=not-a-topic`", () => {
+          return request(app)
+            .get("/api/articles?topic=not-a-topic")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.message).toBe("resource not found");
+            });
+        });
+        test(" GET `/api/articles?topic=paper`", () => {
+          return request(app)
+            .get("/api/articles?topic=paper")
+            .expect(200)
+            .then((result) => {
+              expect(result.body).toEqual({ articles: [] });
+            });
+        });
+        test(" GET `/api/articles?author=not-an-author`", () => {
+          return request(app)
+            .get("/api/articles?author=not-an-author`")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.message).toBe("resource not found");
+            });
+        });
         test("ERROR when passed incorrect author responds with 404 resource not found", () => {
           return request(app)
             .get("/api/articles?author=notKnown")
-            .expect(200)
+            .expect(404)
             .then((result) => {
-              expect(result.body.articles).toEqual([]);
+              expect(result.body.message).toEqual("resource not found");
             });
         });
         test("ERROR when passed incorrect topic responds with 404 resource not found", () => {
           return request(app)
             .get("/api/articles?topic=notKnown")
-            .expect(200)
+            .expect(404)
             .then((result) => {
-              expect(result.body.articles).toEqual([]);
+              expect(result.body.message).toEqual("resource not found");
             });
         });
         test("ERROR order by incorrect term", () => {
@@ -478,214 +502,207 @@ describe("app", () => {
               });
             });
         });
-        test("can take a sort_by query author", () => {
+        test("returns 404 when asked to get comments by an unknown id", () => {
           return request(app)
-            .get("/api/articles/1/comments?sort_by=author")
-            .expect(200)
-            .then((result) => {
-              expect(result.body.comments).toBeSortedBy("author", {
-                descending: true,
-              });
-            });
-        });
-        test("can take a sort_by query aricle_id asc", () => {
-          return request(app)
-            .get("/api/articles/1/comments?sort_by=article_id&order=asc")
-            .expect(200)
-            .then((result) => {
-              expect(result.body.comments).toBeSortedBy("article_id", {
-                coerce: true,
-              });
-            });
-        });
-        test("ERROR when passed incorrect article_id returns 404 resource not found", () => {
-          return request(app)
-            .get("/api/articles/99")
+            .get("/api/articles/99999/comments")
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
-            });
-        });
-        // end of GET
-      });
-      describe("ERRORS /:article_id/comments", () => {
-        test('PATCH "/:article_id/comments"', () => {
-          return request(app)
-            .patch("/api/articles/:article_id/comments")
-            .expect(405)
-            .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
-            });
-        });
-        test('DELETE "/:article_id/comments"', () => {
-          return request(app)
-            .del("/api/articles/:article_id/comments")
-            .expect(405)
-            .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
-            });
-        });
-      });
-      describe("ERRORS /comments/:comment_id", () => {
-        test("POST /api/comments/:comment_id", () => {
-          return request(app)
-            .post("/api/comments/4")
-            .expect(405)
-            .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
-            });
-        });
-        test("GET /api/comments/:comment_id", () => {
-          return request(app)
-            .get("/api/comments/4")
-            .expect(405)
-            .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("resource not found");
             });
         });
       });
 
-      describe("PATCH /comments/:comment_id", () => {
-        test("resonds with 200 okay", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({ inc_votes: 1 })
-            .expect(200);
-        });
-        test("expect comment to be returned with the following keys", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({ inc_votes: 1 })
-            .expect(200)
-            .then((result) => {
-              expect(result.body.comment).toHaveProperty("comment_id");
-              expect(result.body.comment).toHaveProperty("article_id");
-              expect(result.body.comment).toHaveProperty("body");
-              expect(result.body.comment).toHaveProperty("votes");
-              expect(result.body.comment).toHaveProperty("author");
-              expect(result.body.comment).toHaveProperty("created_at");
+      test("can take a sort_by query author", () => {
+        return request(app)
+          .get("/api/articles/1/comments?sort_by=author")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.comments).toBeSortedBy("author", {
+              descending: true,
             });
-        });
-        test("updates vote count by 1", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({ inc_votes: 1 })
-            .expect(200)
-            .then((result) => {
-              expect(result.body.comment.votes).toBe(17);
-            });
-        });
-        test("ERROR when passed an incorrect id returns 404 resource not found", () => {
-          return request(app)
-            .patch("/api/comments/99")
-            .send({ inc_votes: 1 })
-            .expect(404)
-            .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
-            });
-        });
-
-        test("ERROR when passed incorrect body returns 400 bad request", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({ incvotes: 1 })
-            .expect(200)
-            .then((result) => {
-              expect(result.body.comment.votes).toBe(16);
-            });
-        });
-        test("ERROR when passed incorrect body returns 400 bad request", () => {
-          return request(app)
-            .patch("/api/comments/1")
-            .send({ inc_votes: "z" })
-            .expect(400)
-            .then((result) => {
-              expect(result.body.message).toBe("bad request");
-            });
-        });
-
-        test("ERROR when passed incorrect body returns 400 bad request", () => {
-          return request(app)
-            .patch("/api/comments/2")
-            .send({ inc_votes: 1, dave: 1 })
-            .expect(200)
-            .then((result) => {
-              expect(result.body.comment.votes).toBe(15);
-            });
-        });
-      });
-
-      describe("DELETE", () => {
-        test("returns 204 and no content", () => {
-          return request(app)
-            .del("/api/comments/1")
-            .expect(204)
-            .then((result) => {
-              expect(result.res.statusMessage).toBe("No Content");
-            });
-        });
-        test("ERROR incorrect username returns 400 not found", () => {
-          return request(app)
-            .del("/api/comments/z")
-            .expect(400)
-            .then((result) => {
-              expect(result.body.message).toBe("bad request");
-            });
-        });
-        test("ERROR incorrect username returns 404 not found", () => {
-          return request(app)
-            .del("/api/comments/1000")
-            .expect(404)
-            .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
-            });
-        });
-      });
-      // end of DELETE
-      // end of /comments
-    });
-    // end of /api
-  });
-  describe("FEEDBACK TESTS", () => {
-    test(" GET `/api/articles`", () => {
-      return request(app)
-        .get("/api/articles")
-        .expect(200)
-        .then((result) => {
-          expect(result.body.articles[0].article_id).toBe(1);
-        });
-    });
-    test(" GET `/api/articles?author=lurker`", () => {
-      return request(app)
-        .get("/api/articles?author=groceries")
-        .expect(200)
-        .then((result) => {
-          expect(result.body.articles.length).toBe(0);
-        });
-    });
-    test(" GET `/api/articles/2/comments`", () => {
-      return request(app)
-        .get("/api/articles/2/comments")
-        .expect(200)
-        .then((result) => {
-          expect(result.body).toEqual({ comments: [] });
-        });
-    });
-    test(" GET `/api/users/butter_bridge`", () => {
-      return request(app)
-        .get("/api/users/butter_bridge")
-        .expect(200)
-        .then((result) => {
-          expect(result.body).toEqual({
-            user: {
-              username: "butter_bridge",
-              avatar_url:
-                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
-              name: "jonny",
-            },
           });
-        });
+      });
+      test("can take a sort_by query aricle_id asc", () => {
+        return request(app)
+          .get("/api/articles/1/comments?sort_by=article_id&order=asc")
+          .expect(200)
+          .then((result) => {
+            expect(result.body.comments).toBeSortedBy("article_id", {
+              coerce: true,
+            });
+          });
+      });
+      test("ERROR when passed incorrect article_id returns 404 resource not found", () => {
+        return request(app)
+          .get("/api/articles/99")
+          .expect(404)
+          .then((result) => {
+            expect(result.body.msg).toBe("resource not found");
+          });
+      });
+      // end of GET
     });
+    describe("ERRORS /:article_id/comments", () => {
+      test('PATCH "/:article_id/comments"', () => {
+        return request(app)
+          .patch("/api/articles/:article_id/comments")
+          .expect(405)
+          .then((result) => {
+            expect(result.body.msg).toBe("method not allowed");
+          });
+      });
+      test('DELETE "/:article_id/comments"', () => {
+        return request(app)
+          .del("/api/articles/:article_id/comments")
+          .expect(405)
+          .then((result) => {
+            expect(result.body.msg).toBe("method not allowed");
+          });
+      });
+    });
+    describe("ERRORS /comments/:comment_id", () => {
+      test("POST /api/comments/:comment_id", () => {
+        return request(app)
+          .post("/api/comments/4")
+          .expect(405)
+          .then((result) => {
+            expect(result.body.msg).toBe("method not allowed");
+          });
+      });
+      test("GET /api/comments/:comment_id", () => {
+        return request(app)
+          .get("/api/comments/4")
+          .expect(405)
+          .then((result) => {
+            expect(result.body.msg).toBe("method not allowed");
+          });
+      });
+    });
+
+    describe("PATCH /comments/:comment_id", () => {
+      test("resonds with 200 okay", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: 1 })
+          .expect(200);
+      });
+      test("expect comment to be returned with the following keys", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: 1 })
+          .expect(200)
+          .then((result) => {
+            expect(result.body.comment).toHaveProperty("comment_id");
+            expect(result.body.comment).toHaveProperty("article_id");
+            expect(result.body.comment).toHaveProperty("body");
+            expect(result.body.comment).toHaveProperty("votes");
+            expect(result.body.comment).toHaveProperty("author");
+            expect(result.body.comment).toHaveProperty("created_at");
+          });
+      });
+      test("updates vote count by 1", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: 1 })
+          .expect(200)
+          .then((result) => {
+            expect(result.body.comment.votes).toBe(17);
+          });
+      });
+      test("ERROR when passed an incorrect id returns 404 resource not found", () => {
+        return request(app)
+          .patch("/api/comments/99")
+          .send({ inc_votes: 1 })
+          .expect(404)
+          .then((result) => {
+            expect(result.body.msg).toBe("resource not found");
+          });
+      });
+
+      test("ERROR when passed incorrect body returns 400 bad request", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ incvotes: 1 })
+          .expect(200)
+          .then((result) => {
+            expect(result.body.comment.votes).toBe(16);
+          });
+      });
+      test("ERROR when passed incorrect body returns 400 bad request", () => {
+        return request(app)
+          .patch("/api/comments/1")
+          .send({ inc_votes: "z" })
+          .expect(400)
+          .then((result) => {
+            expect(result.body.message).toBe("bad request");
+          });
+      });
+
+      test("ERROR when passed incorrect body returns 400 bad request", () => {
+        return request(app)
+          .patch("/api/comments/2")
+          .send({ inc_votes: 1, dave: 1 })
+          .expect(200)
+          .then((result) => {
+            expect(result.body.comment.votes).toBe(15);
+          });
+      });
+    });
+
+    describe("DELETE", () => {
+      test("returns 204 and no content", () => {
+        return request(app)
+          .del("/api/comments/1")
+          .expect(204)
+          .then((result) => {
+            expect(result.res.statusMessage).toBe("No Content");
+          });
+      });
+      test("ERROR incorrect username returns 400 not found", () => {
+        return request(app)
+          .del("/api/comments/z")
+          .expect(400)
+          .then((result) => {
+            expect(result.body.message).toBe("bad request");
+          });
+      });
+      test("ERROR incorrect username returns 404 not found", () => {
+        return request(app)
+          .del("/api/comments/1000")
+          .expect(404)
+          .then((result) => {
+            expect(result.body.msg).toBe("resource not found");
+          });
+      });
+    });
+    // end of DELETE
+    // end of /comments
   });
-  // end of app
+  // end of /api
 });
+describe("FEEDBACK TESTS", () => {
+  test(" GET `/api/articles`", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((result) => {
+        expect(result.body.articles[0].article_id).toBe(1);
+      });
+  });
+  test(" GET `/api/users/butter_bridge`", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then((result) => {
+        expect(result.body).toEqual({
+          user: {
+            username: "butter_bridge",
+            avatar_url:
+              "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+            name: "jonny",
+          },
+        });
+      });
+  });
+});
+// end of app

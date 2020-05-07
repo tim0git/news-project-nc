@@ -61,3 +61,13 @@ exports.delCommentById = (comment_id) => {
         : { status: 204, msg: "no content" };
     });
 };
+
+exports.selectCommentsByAuthor=(author)=>{
+  return knex
+    .select("*")
+    .from("comments")
+    .where("author", author)
+    .then((result) => {      
+      return result;
+    });
+}
