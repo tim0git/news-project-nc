@@ -23,13 +23,7 @@ exports.seed = function (knex) {
     })
     .then(() => {
       const dateFormatted = formatDates(articleData);
-      return knex
-        .insert(dateFormatted)
-        .into("articles")
-        .returning("*")
-        .then((articleRows) => {
-          return articleRows;
-        });
+      return knex.insert(dateFormatted).into("articles").returning("*");
     })
     .then((articleRows) => {
       const articleRef = makeRefObj(articleRows, "title", "article_id");

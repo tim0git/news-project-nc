@@ -13,7 +13,7 @@ describe("app", () => {
       test("return a JSON Object with available routes", () => {
         return request(app)
           .get("/api")
-          .expect(404)
+          .expect(200)
           .then((result) => {
             expect(result.body.availableRoutes).toEqual({
               GET: "/api/topics",
@@ -176,16 +176,14 @@ describe("app", () => {
             .get("/api/articles/1")
             .expect(200)
             .then((result) => {
-              result.body.article.forEach((individual) => {
-                expect(individual).toHaveProperty("article_id");
-                expect(individual).toHaveProperty("title");
-                expect(individual).toHaveProperty("body");
-                expect(individual).toHaveProperty("votes");
-                expect(individual).toHaveProperty("topic");
-                expect(individual).toHaveProperty("author");
-                expect(individual).toHaveProperty("created_at");
-                expect(individual).toHaveProperty("comment_count");
-              });
+              expect(result.body.article).toHaveProperty("article_id");
+              expect(result.body.article).toHaveProperty("title");
+              expect(result.body.article).toHaveProperty("body");
+              expect(result.body.article).toHaveProperty("votes");
+              expect(result.body.article).toHaveProperty("topic");
+              expect(result.body.article).toHaveProperty("author");
+              expect(result.body.article).toHaveProperty("created_at");
+              expect(result.body.article).toHaveProperty("comment_count");
             });
         });
         test("expect article to have length of 1", () => {
@@ -193,17 +191,7 @@ describe("app", () => {
             .get("/api/articles/1")
             .expect(200)
             .then((result) => {
-              expect(result.body.article.length).toBe(1);
-            });
-        });
-        test("returns article with id of 1", () => {
-          return request(app)
-            .get("/api/articles/1")
-            .expect(200)
-            .then((result) => {
-              result.body.article.forEach((individual) => {
-                expect(individual.article_id).toBe(1);
-              });
+              expect(result.body.article.article_id).toBe(1);
             });
         });
         test("when passed an incorrect Id return 404 resource not found", () => {
@@ -275,7 +263,7 @@ describe("app", () => {
             .send({ inc_votes: "z" })
             .expect(400)
             .then((result) => {
-              expect(result.body.message).toBe("resource not found");
+              expect(result.body.message).toBe("bad request");
             });
         });
         test("ERROR when passed incorrect body returns 400 bad request", () => {
@@ -374,9 +362,9 @@ describe("app", () => {
         test("ERROR sort by incorrect term", () => {
           return request(app)
             .get("/api/articles?sort_by=mansion")
-            .expect(404)
+            .expect(400)
             .then((result) => {
-              expect(result.body.msg).toBe("bad request");
+              expect(result.body.message).toBe("bad request");
             });
         });
         test("ERROR when passed incorrect path responds with list of available paths", () => {
@@ -446,13 +434,13 @@ describe("app", () => {
               });
             });
         });
-        test("ERROR when passed an incorrect username returns 400 bad request", () => {
+        test("ERROR when passed an incorrect username returns 404 resource not found", () => {
           return request(app)
             .post("/api/articles/1/comments")
             .send({ username: "lurke", body: "lorem10" })
-            .expect(400)
+            .expect(404)
             .then((result) => {
-              expect(result.body.message).toBe("bad request");
+              expect(result.body.message).toBe("resource not found");
             });
         });
         // end of POST
@@ -609,7 +597,7 @@ describe("app", () => {
             .send({ inc_votes: "z" })
             .expect(400)
             .then((result) => {
-              expect(result.body.message).toBe("resource not found");
+              expect(result.body.message).toBe("bad request");
             });
         });
         test("ERROR when passed incorrect body returns 400 bad request", () => {
@@ -637,7 +625,15 @@ describe("app", () => {
             .del("/api/comments/z")
             .expect(400)
             .then((result) => {
-              expect(result.body.message).toBe("resource not found");
+              expect(result.body.message).toBe("bad request");
+            });
+        });
+        test("ERROR incorrect username returns 404 not found", () => {
+          return request(app)
+            .del("/api/comments/999")
+            .expect(404)
+            .then((result) => {
+              expect(result.body.msg).toBe("resource not found");
             });
         });
       });

@@ -17,18 +17,17 @@ exports.send404 = (req, res, next) => {
 
 exports.handle405 = (req, res, next) => {
   res.status(405).send({ msg: "method not allowed" });
-}; // tested for all none routes
+}; 
 
 exports.handlePSQLError = (err, req, res, next) => {
-  //console.log(err.code, err.detail);
+
   const codes = {
     "23502": { status: 400, message: "bad request" }, // not_null violation
-    "23503": { status: 400, message: "bad request" }, // 23503 Key (author)=(lurke) is not present in table "users"
-    "22P02": { status: 400, message: "resource not found" }, // invalid_text_representation
+    "23503": { status: 404, message: "resource not found" }, // 23503 Key (author)=(lurke) is not present in table "users"
+    "22P02": { status: 400, message: "bad request" }, // invalid_text_representation
     "42601": { status: 400, message: "bad request" }, // syntax error
-    "42703": { status: 400, message: "resource not found" }, /// undefined column
-    "42803": { status: 400, message: "bad request" }, // Groupby error clause
-    "42P01": { status: 400, message: "not found" }, // query uses the incorrect schema name
+    "42703": { status: 400, message: "bad request" }, /// undefined column
+    "42P01": { status: 400, message: "bad request" }, // query uses the incorrect schema name
     "42P02": { status: 400, message: "bad request" }, // undefined parameter
   };
   if (err.code in codes) {
@@ -40,7 +39,6 @@ exports.handlePSQLError = (err, req, res, next) => {
 };
 
 exports.handleCustomError = (err, req, res, next) => {
-  //console.log(err);
   if (err.status) {
     res.status(err.status).send({ msg: err.msg });
   } else {
@@ -49,6 +47,5 @@ exports.handleCustomError = (err, req, res, next) => {
 };
 
 exports.handleInternalError = (err, req, res, next) => {
-  //console.log(err);
   res.status(500).send({ msg: "Internal server error" });
 };

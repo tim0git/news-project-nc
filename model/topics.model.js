@@ -5,8 +5,6 @@ exports.selectAllTopics = () => {
     .select("*")
     .from("topics")
     .then((result) => {
-      return result.length < 1
-        ? Promise.reject({ status: 404, msg: "resource not found" })
-        : result;
+      return result;
     });
 };

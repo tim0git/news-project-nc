@@ -7,9 +7,6 @@ exports.insertComment = (body) => {
       author: body.username,
       body: body.body,
     })
-    .then((result) => {
-      return result;
-    });
 };
 
 exports.selectCommentById = (
@@ -30,8 +27,8 @@ exports.selectCommentById = (
 };
 
 exports.incrementCommentById = (comment_id, inc_votes = 0) => {
-if (inc_votes === 0) return Promise.reject({ status: 400, msg: "bad request" });
-
+  if (inc_votes === 0)
+    return Promise.reject({ status: 400, msg: "bad request" });
   return knex("comments")
     .where("comments.comment_id", comment_id)
     .increment("votes", inc_votes)
@@ -51,9 +48,10 @@ exports.delCommentById = (comment_id) => {
   return knex("comments")
     .where("comment_id", comment_id)
     .del()
+    .returning("*")
     .then((results) => {
-      return (results = 0
-        ? Promise.reject({ status: 404, msg: "invalid syntax" })
+      return (results.length < 1
+        ? Promise.reject({ status: 404, msg: "resource not found" })
         : { status: 204, msg: "no content" });
     });
 };
