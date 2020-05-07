@@ -18,9 +18,6 @@ exports.selectArticleById = (article_id) => {
 };
 
 exports.updateArticleById = (article_id, inc_votes = 0) => {
-  if (inc_votes === 0)
-    return Promise.reject({ status: 400, msg: "bad request" });
-
   return knex("articles")
     .where("articles.article_id", article_id)
     .increment("votes", inc_votes)
@@ -28,12 +25,12 @@ exports.updateArticleById = (article_id, inc_votes = 0) => {
     .then((result) => {
       return result.length < 1
         ? Promise.reject({ status: 404, msg: "resource not found" })
-        : result;
+        : result[0];
     });
 };
 
 exports.selectAllArticles = (
-  sort_by = "article_id",
+  sort_by = "created_at",
   order = "desc",
   author,
   topic
@@ -51,11 +48,9 @@ exports.selectAllArticles = (
         if (topic) query.where("articles.topic", topic);
       })
       .then((result) => {
-        return result.length < 1
-          ? Promise.reject({ status: 404, msg: "resource not found" })
-          : result;
+        return result;
       });
   } else {
-    return Promise.reject({ status: 404, msg: "bad request" }); // bad request for orderBy
+    return Promise.reject({ status: 400, msg: "bad request" }); // bad request for orderBy
   }
 };

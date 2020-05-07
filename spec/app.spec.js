@@ -102,17 +102,7 @@ describe("app", () => {
             .get("/api/users/butter_bridge")
             .expect(200)
             .then((result) => {
-              result.body.user.forEach((individual) => {
-                expect(individual.username).toEqual("butter_bridge");
-              });
-            });
-        });
-        test("expect user to have length of 1", () => {
-          return request(app)
-            .get("/api/users/butter_bridge")
-            .expect(200)
-            .then((result) => {
-              expect(result.body.user.length).toBe(1);
+              expect(result.body.user.username).toEqual("butter_bridge");
             });
         });
         test("return object has properties of username, avatar_url, name", () => {
@@ -120,11 +110,9 @@ describe("app", () => {
             .get("/api/users/butter_bridge")
             .expect(200)
             .then((result) => {
-              result.body.user.forEach((individual) => {
-                expect(individual).toHaveProperty("username");
-                expect(individual).toHaveProperty("avatar_url");
-                expect(individual).toHaveProperty("name");
-              });
+              expect(result.body.user).toHaveProperty("username");
+              expect(result.body.user).toHaveProperty("avatar_url");
+              expect(result.body.user).toHaveProperty("name");
             });
         });
         // end of /users GET
@@ -217,15 +205,13 @@ describe("app", () => {
             .send({ inc_votes: 1 })
             .expect(200)
             .then((result) => {
-              result.body.article.forEach((individual) => {
-                expect(individual).toHaveProperty("article_id");
-                expect(individual).toHaveProperty("title");
-                expect(individual).toHaveProperty("body");
-                expect(individual).toHaveProperty("votes");
-                expect(individual).toHaveProperty("topic");
-                expect(individual).toHaveProperty("author");
-                expect(individual).toHaveProperty("created_at");
-              });
+              expect(result.body.article).toHaveProperty("article_id");
+              expect(result.body.article).toHaveProperty("title");
+              expect(result.body.article).toHaveProperty("body");
+              expect(result.body.article).toHaveProperty("votes");
+              expect(result.body.article).toHaveProperty("topic");
+              expect(result.body.article).toHaveProperty("author");
+              expect(result.body.article).toHaveProperty("created_at");
             });
         });
         test("updates vote count by 1", () => {
@@ -234,9 +220,7 @@ describe("app", () => {
             .send({ inc_votes: 1 })
             .expect(200)
             .then((result) => {
-              result.body.article.forEach((individual) => {
-                expect(individual.votes).toBe(101);
-              });
+              expect(result.body.article.votes).toBe(101);
             });
         });
         test("ERROR when passed incorrect Id returns 404 resource not found", () => {
@@ -248,15 +232,17 @@ describe("app", () => {
               expect(result.body.msg).toBe("resource not found");
             });
         });
-        test("ERROR when passed incorrect body returns 400 bad request", () => {
+
+        test("ERROR when passed incorrect body returns 200 okay votes 100", () => {
           return request(app)
             .patch("/api/articles/1")
             .send({ incvotes: 1 })
-            .expect(400)
+            .expect(200)
             .then((result) => {
-              expect(result.body.msg).toBe("bad request");
+              expect(result.body.article.votes).toBe(100);
             });
         });
+
         test("ERROR when passed incorrect body returns 400 bad request", () => {
           return request(app)
             .patch("/api/articles/1")
@@ -266,16 +252,18 @@ describe("app", () => {
               expect(result.body.message).toBe("bad request");
             });
         });
-        test("ERROR when passed incorrect body returns 400 bad request", () => {
+
+        test("ERROR when passed incorrect body returns 200 okay votes 101", () => {
           return request(app)
             .patch("/api/articles/1")
             .send({ inc_votes: 1, dave: 1 })
-            .expect(400)
+            .expect(200)
             .then((result) => {
-              expect(result.body.msg).toBe("bad request");
+              expect(result.body.article.votes).toBe(101);
             });
         });
       });
+
       describe("GET", () => {
         test("reponds with 200 on api/articles", () => {
           return request(app).get("/api/articles").expect(200);
@@ -338,30 +326,30 @@ describe("app", () => {
         test("ERROR when passed incorrect author responds with 404 resource not found", () => {
           return request(app)
             .get("/api/articles?author=notKnown")
-            .expect(404)
+            .expect(200)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
+              expect(result.body.articles).toEqual([]);
             });
         });
         test("ERROR when passed incorrect topic responds with 404 resource not found", () => {
           return request(app)
             .get("/api/articles?topic=notKnown")
-            .expect(404)
+            .expect(200)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
+              expect(result.body.articles).toEqual([]);
             });
         });
         test("ERROR order by incorrect term", () => {
           return request(app)
-            .get("/api/articles?sort_by=author&order=down")
-            .expect(404)
+            .get("/api/articles?sort_by=author&order=not-asc-or-desc")
+            .expect(400)
             .then((result) => {
               expect(result.body.msg).toBe("bad request");
             });
         });
-        test("ERROR sort by incorrect term", () => {
+        test("ERROR sort by incorrect term not-a-column", () => {
           return request(app)
-            .get("/api/articles?sort_by=mansion")
+            .get("/api/articles?sort_by=not-a-column")
             .expect(400)
             .then((result) => {
               expect(result.body.message).toBe("bad request");
@@ -414,35 +402,53 @@ describe("app", () => {
       describe("POST /:article_id/comments", () => {
         test("post request return 201", () => {
           return request(app)
-            .post("/api/articles/1/comments")
+            .post("/api/articles/5/comments")
             .send({ username: "lurker", body: "lorem10" })
             .expect(201);
         });
         test("expect return object to have the following keys", () => {
           return request(app)
-            .post("/api/articles/1/comments")
+            .post("/api/articles/4/comments")
             .send({ username: "lurker", body: "lorem10" })
             .expect(201)
             .then((result) => {
-              result.body.comment.forEach((comment) => {
-                expect(comment).toHaveProperty("comment_id");
-                expect(comment).toHaveProperty("author");
-                expect(comment).toHaveProperty("article_id");
-                expect(comment).toHaveProperty("votes");
-                expect(comment).toHaveProperty("body");
-                expect(comment).toHaveProperty("created_at");
-              });
+              expect(result.body.comment).toHaveProperty("comment_id");
+              expect(result.body.comment).toHaveProperty("author");
+              expect(result.body.comment).toHaveProperty("votes");
+              expect(result.body.comment).toHaveProperty("body");
+              expect(result.body.comment).toHaveProperty("created_at");
             });
         });
         test("ERROR when passed an incorrect username returns 404 resource not found", () => {
           return request(app)
             .post("/api/articles/1/comments")
-            .send({ username: "lurke", body: "lorem10" })
+            .send({ username: "tommy", body: "lorem10" })
             .expect(404)
             .then((result) => {
               expect(result.body.message).toBe("resource not found");
             });
         });
+
+        test("ERROR when passed an valid username not there returns 404 resource not found", () => {
+          return request(app)
+            .post("/api/articles/10000/comments")
+            .send({ username: "lurker", body: "lorem10" })
+            .expect(404)
+            .then((result) => {
+              expect(result.body.message).toBe("resource not found");
+            });
+        });
+
+        test("ERROR when passed an incorrect username returns 400 bad request", () => {
+          return request(app)
+            .post("/api/articles/notValid/comments")
+            .send({ username: "lurker", body: "lorem10" })
+            .expect(400)
+            .then((result) => {
+              expect(result.body.message).toBe("bad request");
+            });
+        });
+
         // end of POST
       });
       describe("GET /:article_id/comments", () => {
@@ -552,14 +558,12 @@ describe("app", () => {
             .send({ inc_votes: 1 })
             .expect(200)
             .then((result) => {
-              result.body.comment.forEach((individual) => {
-                expect(individual).toHaveProperty("comment_id");
-                expect(individual).toHaveProperty("article_id");
-                expect(individual).toHaveProperty("body");
-                expect(individual).toHaveProperty("votes");
-                expect(individual).toHaveProperty("author");
-                expect(individual).toHaveProperty("created_at");
-              });
+              expect(result.body.comment).toHaveProperty("comment_id");
+              expect(result.body.comment).toHaveProperty("article_id");
+              expect(result.body.comment).toHaveProperty("body");
+              expect(result.body.comment).toHaveProperty("votes");
+              expect(result.body.comment).toHaveProperty("author");
+              expect(result.body.comment).toHaveProperty("created_at");
             });
         });
         test("updates vote count by 1", () => {
@@ -568,9 +572,7 @@ describe("app", () => {
             .send({ inc_votes: 1 })
             .expect(200)
             .then((result) => {
-              result.body.comment.forEach((individual) => {
-                expect(individual.votes).toBe(17);
-              });
+              expect(result.body.comment.votes).toBe(17);
             });
         });
         test("ERROR when passed an incorrect id returns 404 resource not found", () => {
@@ -582,13 +584,14 @@ describe("app", () => {
               expect(result.body.msg).toBe("resource not found");
             });
         });
+
         test("ERROR when passed incorrect body returns 400 bad request", () => {
           return request(app)
             .patch("/api/comments/1")
             .send({ incvotes: 1 })
-            .expect(400)
+            .expect(200)
             .then((result) => {
-              expect(result.body.msg).toBe("bad request");
+              expect(result.body.comment.votes).toBe(16);
             });
         });
         test("ERROR when passed incorrect body returns 400 bad request", () => {
@@ -600,13 +603,14 @@ describe("app", () => {
               expect(result.body.message).toBe("bad request");
             });
         });
+
         test("ERROR when passed incorrect body returns 400 bad request", () => {
           return request(app)
-            .patch("/api/comments/1")
+            .patch("/api/comments/2")
             .send({ inc_votes: 1, dave: 1 })
-            .expect(400)
+            .expect(200)
             .then((result) => {
-              expect(result.body.msg).toBe("bad request");
+              expect(result.body.comment.votes).toBe(15);
             });
         });
       });
@@ -630,7 +634,7 @@ describe("app", () => {
         });
         test("ERROR incorrect username returns 404 not found", () => {
           return request(app)
-            .del("/api/comments/999")
+            .del("/api/comments/1000")
             .expect(404)
             .then((result) => {
               expect(result.body.msg).toBe("resource not found");
@@ -641,6 +645,47 @@ describe("app", () => {
       // end of /comments
     });
     // end of /api
+  });
+  describe("FEEDBACK TESTS", () => {
+    test(" GET `/api/articles`", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((result) => {
+          expect(result.body.articles[0].article_id).toBe(1);
+        });
+    });
+    test(" GET `/api/articles?author=lurker`", () => {
+      return request(app)
+        .get("/api/articles?author=groceries")
+        .expect(200)
+        .then((result) => {
+          expect(result.body.articles.length).toBe(0);
+        });
+    });
+    test(" GET `/api/articles/2/comments`", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then((result) => {
+          expect(result.body).toEqual({ comments: [] });
+        });
+    });
+    test(" GET `/api/users/butter_bridge`", () => {
+      return request(app)
+        .get("/api/users/butter_bridge")
+        .expect(200)
+        .then((result) => {
+          expect(result.body).toEqual({
+            user: {
+              username: "butter_bridge",
+              avatar_url:
+                "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+              name: "jonny",
+            },
+          });
+        });
+    });
   });
   // end of app
 });

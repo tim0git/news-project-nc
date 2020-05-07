@@ -7,9 +7,11 @@ const {
 
 exports.postComment = (req, res, next) => {
   const { body } = req;
-  insertComment(body)
+  const { article_id } = req.params;
+  insertComment(body, article_id)
     .then((result) => {
-      res.status(201).send({ comment: result });
+      //console.log(result);
+      res.status(201).send({ comment: result[0] });
     })
     .catch(next);
 };
@@ -23,12 +25,11 @@ exports.getCommentById = (req, res, next) => {
       res.status(200).send({ comments: result });
     })
     .catch(next);
-};
+}; // get comments by article_id
 
 exports.patchCommentById = (req, res, next) => {
   const { comment_id } = req.params;
-  let { inc_votes } = req.body;
-  if (Object.keys(req.body).length > 1) inc_votes = 0; //ensure that the object is correctly formatted
+  const { inc_votes } = req.body;
   incrementCommentById(comment_id, inc_votes)
     .then((result) => {
       res.status(200).send({ comment: result });

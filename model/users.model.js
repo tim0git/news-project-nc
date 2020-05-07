@@ -8,6 +8,6 @@ exports.selectUserById = (username) => {
     .then((result) => {
       return result.length < 1
         ? Promise.reject({ status: 404, msg: "resource not found" })
-        : result;
+        : result[0];
     });
 };

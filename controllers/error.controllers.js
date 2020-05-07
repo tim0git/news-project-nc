@@ -17,10 +17,9 @@ exports.send404 = (req, res, next) => {
 
 exports.handle405 = (req, res, next) => {
   res.status(405).send({ msg: "method not allowed" });
-}; 
+};
 
 exports.handlePSQLError = (err, req, res, next) => {
-
   const codes = {
     "23502": { status: 400, message: "bad request" }, // not_null violation
     "23503": { status: 404, message: "resource not found" }, // 23503 Key (author)=(lurke) is not present in table "users"
@@ -47,5 +46,7 @@ exports.handleCustomError = (err, req, res, next) => {
 };
 
 exports.handleInternalError = (err, req, res, next) => {
+  console.log(err);
+
   res.status(500).send({ msg: "Internal server error" });
 };
