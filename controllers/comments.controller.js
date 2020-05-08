@@ -43,5 +43,7 @@ exports.deleteCommentById = (req, res, next) => {
     .then((result) => {
       res.status(result.status).send({ result: result });
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 };

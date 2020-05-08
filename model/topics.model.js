@@ -8,6 +8,8 @@ exports.selectAllTopics = (topic) => {
       if (topic) query.where("slug", topic);
     })
     .then((result) => {
-      return result;
+      return result.length < 1
+        ? Promise.reject({ status: 404, msg: "resource not found" })
+        : result;
     });
 };

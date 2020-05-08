@@ -30,7 +30,9 @@ exports.selectCommentById = (
     .where("articles.article_id", article_id)
     .orderBy(`comments.${sort_by}`, order)
     .then((result) => {
-      return result;
+      return result.length < 1
+        ? Promise.reject({ status: 404, msg: "resource not found" })
+        : result;
     });
 }; //
 
@@ -62,12 +64,14 @@ exports.delCommentById = (comment_id) => {
     });
 };
 
-exports.selectCommentsByAuthor=(author)=>{
+exports.selectCommentsByAuthor = (author) => {
   return knex
     .select("*")
     .from("comments")
     .where("author", author)
-    .then((result) => {      
-      return result;
+    .then((result) => {
+      return result.length < 1
+        ? Promise.reject({ status: 404, msg: "resource not found" })
+        : result[0];
     });
-}
+};

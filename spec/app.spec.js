@@ -328,7 +328,7 @@ describe("app", () => {
             .get("/api/articles?topic=not-a-topic")
             .expect(404)
             .then((result) => {
-              expect(result.body.message).toBe("resource not found");
+              expect(result.body.msg).toBe("resource not found");
             });
         });
         test(" GET `/api/articles?topic=paper`", () => {
@@ -339,12 +339,12 @@ describe("app", () => {
               expect(result.body).toEqual({ articles: [] });
             });
         });
-        test(" GET `/api/articles?author=not-an-author`", () => {
+        test("ERROR /api/articles?author=not-an-author", () => {
           return request(app)
-            .get("/api/articles?author=not-an-author`")
+            .get("/api/articles?author=not-an-author")
             .expect(404)
             .then((result) => {
-              expect(result.body.message).toBe("resource not found");
+              expect(result.body.msg).toBe("resource not found");
             });
         });
         test("ERROR when passed incorrect author responds with 404 resource not found", () => {
@@ -352,7 +352,7 @@ describe("app", () => {
             .get("/api/articles?author=notKnown")
             .expect(404)
             .then((result) => {
-              expect(result.body.message).toEqual("resource not found");
+              expect(result.body.msg).toEqual("resource not found");
             });
         });
         test("ERROR when passed incorrect topic responds with 404 resource not found", () => {
@@ -360,7 +360,7 @@ describe("app", () => {
             .get("/api/articles?topic=notKnown")
             .expect(404)
             .then((result) => {
-              expect(result.body.message).toEqual("resource not found");
+              expect(result.body.msg).toEqual("resource not found");
             });
         });
         test("ERROR order by incorrect term", () => {
@@ -507,7 +507,7 @@ describe("app", () => {
             .get("/api/articles/99999/comments")
             .expect(404)
             .then((result) => {
-              expect(result.body.message).toBe("resource not found");
+              expect(result.body.msg).toBe("resource not found");
             });
         });
       });
