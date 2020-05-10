@@ -578,7 +578,6 @@ describe("app", () => {
           });
       });
     });
-
     describe("PATCH /comments/:comment_id", () => {
       test("resonds with 200 okay", () => {
         return request(app)
