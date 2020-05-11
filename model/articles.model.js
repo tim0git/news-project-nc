@@ -86,3 +86,21 @@ exports.checkArticle_id = (article_id) => {
         : result;
     });
 };
+
+exports.articleCount = (
+  author,
+  topic
+) => {
+  return knex
+    .select("articles.*")
+    .from("articles")
+    .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
+    .modify((query) => {
+      if (author) query.where("articles.author", author);
+      if (topic) query.where("articles.topic", topic);
+    })
+    .then((result) => {
+      const articleCount = result.length;
+      return articleCount;
+    });
+};
