@@ -21,13 +21,18 @@ exports.insertComment = (body, article_id) => {
 exports.selectCommentById = (
   article_id,
   sort_by = "created_at",
-  order = "desc"
+  order = "desc",
+  limit = 10,
+  p = 1
 ) => {
+  const offset = p * limit - limit;
   return knex
     .select("*")
     .from("articles")
     .join("comments", "comments.article_id", "=", "articles.article_id")
     .where("articles.article_id", article_id)
+    .limit(limit)
+    .offset(offset)
     .orderBy(`comments.${sort_by}`, order)
     .then((result) => {
       return result;

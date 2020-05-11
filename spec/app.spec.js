@@ -232,7 +232,6 @@ describe("app", () => {
               expect(result.body.msg).toBe("resource not found");
             });
         });
-
         test("ERROR when passed incorrect body returns 200 okay votes 100", () => {
           return request(app)
             .patch("/api/articles/1")
@@ -242,7 +241,6 @@ describe("app", () => {
               expect(result.body.article.votes).toBe(100);
             });
         });
-
         test("ERROR when passed incorrect body returns 400 bad request", () => {
           return request(app)
             .patch("/api/articles/1")
@@ -252,7 +250,6 @@ describe("app", () => {
               expect(result.body.message).toBe("bad request");
             });
         });
-
         test("ERROR when passed incorrect body returns 200 okay votes 101", () => {
           return request(app)
             .patch("/api/articles/1")
@@ -263,7 +260,6 @@ describe("app", () => {
             });
         });
       });
-
       describe("GET", () => {
         test("reponds with 200 on api/articles", () => {
           return request(app).get("/api/articles").expect(200);
@@ -295,7 +291,6 @@ describe("app", () => {
               });
             });
         });
-
         test("can take a sort_by query author & order by asc", () => {
           return request(app)
             .get("/api/articles?sort_by=author&order=asc")
@@ -304,7 +299,6 @@ describe("app", () => {
               expect(result.body.articles).toBeSortedBy("author");
             });
         });
-
         test("can filter by author", () => {
           return request(app)
             .get("/api/articles?author=butter_bridge")
@@ -315,7 +309,6 @@ describe("app", () => {
               });
             });
         });
-
         test("can filter by author lurker", () => {
           return request(app)
             .get("/api/articles?author=lurker")
@@ -326,7 +319,6 @@ describe("app", () => {
               });
             });
         });
-
         test("can filter by topic", () => {
           return request(app)
             .get("/api/articles?topic=mitch")
@@ -337,7 +329,6 @@ describe("app", () => {
               });
             });
         });
-
         test(" GET `/api/articles?topic=not-a-topic`", () => {
           return request(app)
             .get("/api/articles?topic=not-a-topic")
@@ -351,10 +342,9 @@ describe("app", () => {
             .get("/api/articles?topic=paper")
             .expect(200)
             .then((result) => {
-              expect(result.body).toEqual({ articles: [] });
+              expect(result.body).toEqual({ articles: [], total_count: 0 });
             });
         });
-
         test("ERROR /api/articles?author=not-an-author", () => {
           return request(app)
             .get("/api/articles?author=not-an-author")
@@ -363,7 +353,6 @@ describe("app", () => {
               expect(result.body.msg).toBe("resource not found");
             });
         });
-
         test("ERROR when passed incorrect author responds with 404 resource not found", () => {
           return request(app)
             .get("/api/articles?author=notKnown")
@@ -415,6 +404,22 @@ describe("app", () => {
                   DELETE: "/api/comments/:comment_id",
                 },
               });
+            });
+        });
+        test(" GET `/api/articles?limit=10 page 1`", () => {
+          return request(app)
+            .get("/api/articles?limit=10&p=1")
+            .expect(200)
+            .then((result) => {
+              expect(result.body.articles.length).toEqual(10);
+            });
+        });
+        test(" GET `/api/articles?limit=10 page 2`", () => {
+          return request(app)
+            .get("/api/articles?limit=10&p=2")
+            .expect(200)
+            .then((result) => {
+              expect(result.body.articles.length).toEqual(2);
             });
         });
         // end of GET
@@ -469,7 +474,6 @@ describe("app", () => {
               expect(result.body.message).toBe("resource not found");
             });
         });
-
         test("ERROR when passed an valid username not there returns 404 resource not found", () => {
           return request(app)
             .post("/api/articles/10000/comments")
@@ -479,7 +483,6 @@ describe("app", () => {
               expect(result.body.message).toBe("resource not found");
             });
         });
-
         test("ERROR when passed an incorrect username returns 400 bad request", () => {
           return request(app)
             .post("/api/articles/notValid/comments")
@@ -489,7 +492,6 @@ describe("app", () => {
               expect(result.body.message).toBe("bad request");
             });
         });
-
         // end of POST
       });
       describe("GET /:article_id/comments", () => {
@@ -519,6 +521,24 @@ describe("app", () => {
               });
             });
         });
+        test("can take a sort_by query comment_id", () => {
+          return request(app)
+            .get("/api/articles/1/comments?limit=10&p=1")
+            .expect(200)
+            .then((result) => {
+              expect(result.body.comments.length).toBe(10);
+              expect(result.body.total_count).toBe(10);
+            });
+        });
+        test("can take a sort_by query comment_id", () => {
+          return request(app)
+            .get("/api/articles/1/comments?limit=10&p=2")
+            .expect(200)
+            .then((result) => {
+              expect(result.body.comments.length).toBe(3);
+              expect(result.body.total_count).toBe(3);
+            });
+        });
         test("returns 404 when asked to get comments by an unknown id", () => {
           return request(app)
             .get("/api/articles/99999/comments")
@@ -527,7 +547,6 @@ describe("app", () => {
               expect(result.body.msg).toBe("resource not found");
             });
         });
-
         test("returns 200 [] when id is correct but has no comments", () => {
           return request(app)
             .get("/api/articles/2/comments")
@@ -537,7 +556,6 @@ describe("app", () => {
             });
         });
       });
-
       test("can take a sort_by query author", () => {
         return request(app)
           .get("/api/articles/1/comments?sort_by=author")
@@ -643,7 +661,6 @@ describe("app", () => {
             expect(result.body.msg).toBe("resource not found");
           });
       });
-
       test("ERROR when passed incorrect body returns 400 bad request", () => {
         return request(app)
           .patch("/api/comments/1")
@@ -662,7 +679,6 @@ describe("app", () => {
             expect(result.body.message).toBe("bad request");
           });
       });
-
       test("ERROR when passed incorrect body returns 400 bad request", () => {
         return request(app)
           .patch("/api/comments/2")
@@ -673,7 +689,6 @@ describe("app", () => {
           });
       });
     });
-
     describe("DELETE", () => {
       test("returns 204 and no content", () => {
         return request(app)

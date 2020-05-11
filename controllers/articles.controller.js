@@ -26,14 +26,16 @@ exports.patchArticleById = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  const { sort_by, order, author, topic } = req.query;
-  const queries = [selectAllArticles(sort_by, order, author, topic)];
+  const { sort_by, order, author, topic, limit, p } = req.query;
+  const queries = [selectAllArticles(sort_by, order, author, topic, limit, p)];
   if (author) queries.push(selectUserById(author));
   if (topic) queries.push(selectAllTopics(topic));
   Promise.all(queries)
     .then((results) => {
-      const articles = results;
-      res.status(200).send({ articles: results[0] });
+      const articles = results[0];
+      res
+        .status(200)
+        .send({ articles: articles, total_count: articles.length });
     })
     .catch(next);
 };

@@ -33,15 +33,20 @@ exports.selectAllArticles = (
   sort_by = "created_at",
   order = "desc",
   author,
-  topic
+  topic,
+  limit = 10,
+  p = 1
 ) => {
   if (order === "desc" || order === "asc") {
+    const offset = p * limit - limit;
     return knex
       .select("articles.*")
       .count({ comment_count: "comments.article_id" })
       .from("articles")
       .leftJoin("comments", "articles.article_id", "=", "comments.article_id")
       .groupBy("articles.article_id")
+      .limit(limit)
+      .offset(offset)
       .orderBy(sort_by, order)
       .modify((query) => {
         if (author) query.where("articles.author", author);

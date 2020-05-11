@@ -19,14 +19,12 @@ exports.postComment = (req, res, next) => {
 
 exports.getCommentById = (req, res, next) => {
   const { article_id } = req.params;
-  const { sort_by, order } = req.query;
-  const queries = [selectCommentById(article_id, sort_by, order)];
+  const { sort_by, order, limit, p } = req.query;
+  const queries = [selectCommentById(article_id, sort_by, order, limit, p)];
   if (article_id) queries.push(checkArticle_id(article_id));
   Promise.all(queries)
     .then(([comments, article]) => {
-      // console.log(result, "article");
-      // console.log(comments, "articles");
-      res.status(200).send({ comments: comments });
+      res.status(200).send({ comments: comments, total_count: comments.length });
     })
     .catch(next);
 };
