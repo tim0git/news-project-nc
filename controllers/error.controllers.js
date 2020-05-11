@@ -1,16 +1,16 @@
 exports.send404 = (req, res, next) => {
   res.status(404).send({
     availableRoutes: {
-      GET1: "/api/topics",
-      GET2: "/api/users/:username",
-      GET3: "/api/articles/:article_id",
-      GET4: "/api/articles/:article_id/comments",
-      GET5: "/api/articles",
-      GET6: "/api",
-      PATCH1: "/api/articles/:article_id",
-      PATCH2: "/api/comments/:comment_id",
-      POST1: "/api/articles/:article_id/comments",
-      DELETE1: "/api/comments/:comment_id",
+      GET: "/api/topics",
+      GET: "/api/users/:username",
+      GET: "/api/articles/:article_id",
+      GET: "/api/articles/:article_id/comments",
+      GET: "/api/articles",
+      GET: "/api",
+      PATCH: "/api/articles/:article_id",
+      PATCH: "/api/comments/:comment_id",
+      POST: "/api/articles/:article_id/comments",
+      DELETE: "/api/comments/:comment_id",
     },
   });
 };

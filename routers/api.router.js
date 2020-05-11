@@ -10,6 +10,6 @@ apiRouter.use("/topics", topicsRouter);
 apiRouter.use("/users", usersRouter); //GET /api/users/:username
 apiRouter.use("/articles", articlesRouter); //GET /api/articles/:article_id
 apiRouter.use("/comments", commentsRouter); // PATCH /api/comments/:comment_id
-apiRouter.route("/").get(sendRoutes).all(handle405); // /api send a list of all available routes
+apiRouter.route("/").all(sendRoutes); // /api send a list of all available routes
 
 module.exports = apiRouter;
