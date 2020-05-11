@@ -295,6 +295,7 @@ describe("app", () => {
               });
             });
         });
+
         test("can take a sort_by query author & order by asc", () => {
           return request(app)
             .get("/api/articles?sort_by=author&order=asc")
@@ -303,6 +304,7 @@ describe("app", () => {
               expect(result.body.articles).toBeSortedBy("author");
             });
         });
+
         test("can filter by author", () => {
           return request(app)
             .get("/api/articles?author=butter_bridge")
@@ -313,6 +315,18 @@ describe("app", () => {
               });
             });
         });
+
+        test("can filter by author lurker", () => {
+          return request(app)
+            .get("/api/articles?author=lurker")
+            .expect(200)
+            .then((result) => {
+              result.body.articles.forEach((article) => {
+                expect(article.author).toBe("lurker");
+              });
+            });
+        });
+
         test("can filter by topic", () => {
           return request(app)
             .get("/api/articles?topic=mitch")
@@ -323,6 +337,7 @@ describe("app", () => {
               });
             });
         });
+
         test(" GET `/api/articles?topic=not-a-topic`", () => {
           return request(app)
             .get("/api/articles?topic=not-a-topic")
@@ -339,6 +354,7 @@ describe("app", () => {
               expect(result.body).toEqual({ articles: [] });
             });
         });
+
         test("ERROR /api/articles?author=not-an-author", () => {
           return request(app)
             .get("/api/articles?author=not-an-author")
@@ -347,6 +363,7 @@ describe("app", () => {
               expect(result.body.msg).toBe("resource not found");
             });
         });
+
         test("ERROR when passed incorrect author responds with 404 resource not found", () => {
           return request(app)
             .get("/api/articles?author=notKnown")
@@ -508,6 +525,15 @@ describe("app", () => {
             .expect(404)
             .then((result) => {
               expect(result.body.msg).toBe("resource not found");
+            });
+        });
+
+        test("returns 200 [] when id is correct but has no comments", () => {
+          return request(app)
+            .get("/api/articles/2/comments")
+            .expect(200)
+            .then((result) => {
+              expect(result.body.comments).toEqual([]);
             });
         });
       });

@@ -2,10 +2,10 @@ const {
   selectArticleById,
   updateArticleById,
   selectAllArticles,
-  selectAllArticlesTopic,
+  selectUsers
 } = require("../model/articles.model");
+
 const { selectAllTopics } = require("../model/topics.model");
-const { selectCommentsByAuthor } = require("../model/comments.model");
 
 exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
@@ -29,7 +29,7 @@ exports.patchArticleById = (req, res, next) => {
 exports.getAllArticles = (req, res, next) => {
   const { sort_by, order, author, topic } = req.query;
   const queries = [selectAllArticles(sort_by, order, author, topic)];
-  if (author) queries.push(selectCommentsByAuthor(author));
+  if (author) queries.push(selectUsers(author));
   if (topic) queries.push(selectAllTopics(topic));
   Promise.all(queries)
     .then((results) => {

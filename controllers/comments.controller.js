@@ -4,6 +4,7 @@ const {
   incrementCommentById,
   delCommentById,
 } = require("../model/comments.model.js");
+const { checkArticle_id } = require("../model/articles.model");
 
 exports.postComment = (req, res, next) => {
   const { body } = req;
@@ -18,14 +19,17 @@ exports.postComment = (req, res, next) => {
 
 exports.getCommentById = (req, res, next) => {
   const { article_id } = req.params;
-  const { sort_by } = req.query;
-  const { order } = req.query;
-  selectCommentById(article_id, sort_by, order)
-    .then((result) => {
-      res.status(200).send({ comments: result });
+  const { sort_by, order } = req.query;
+  const queries = [selectCommentById(article_id, sort_by, order)];
+  if (article_id) queries.push(checkArticle_id(article_id));
+  Promise.all(queries)
+    .then(([comments, article]) => {
+      // console.log(result, "article");
+      // console.log(comments, "articles");
+      res.status(200).send({ comments: comments });
     })
     .catch(next);
-}; // get comments by article_id
+};
 
 exports.patchCommentById = (req, res, next) => {
   const { comment_id } = req.params;

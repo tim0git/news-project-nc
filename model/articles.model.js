@@ -1,6 +1,5 @@
 const knex = require("../db/connection");
 
-
 exports.selectArticleById = (article_id) => {
   return knex
     .select("articles.*")
@@ -55,3 +54,30 @@ exports.selectAllArticles = (
     return Promise.reject({ status: 400, msg: "bad request" }); // bad request for orderBy
   }
 };
+
+exports.selectUsers = (author) => {
+  return knex
+    .select("*")
+    .from("users")
+    .returning("*")
+    .where("username", author)
+    .then((result) => {
+      return result.length < 1
+        ? Promise.reject({ status: 404, msg: "resource not found" })
+        : result[0];
+    });
+};
+
+exports.checkArticle_id = (article_id)=>{
+  return knex
+  .select("*")
+  .from("articles")
+  .modify((query) => {
+    if (article_id) query.where("articles.article_id", article_id);
+  })
+  .then((result) => {
+    return result.length < 1
+      ? Promise.reject({ status: 404, msg: "resource not found" })
+      : result;
+  });
+}
