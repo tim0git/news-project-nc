@@ -67,17 +67,3 @@ exports.selectUsers = (author) => {
         : result[0];
     });
 };
-
-exports.checkArticle_id = (article_id)=>{
-  return knex
-  .select("*")
-  .from("articles")
-  .modify((query) => {
-    if (article_id) query.where("articles.article_id", article_id);
-  })
-  .then((result) => {
-    return result.length < 1
-      ? Promise.reject({ status: 404, msg: "resource not found" })
-      : result;
-  });
-}
