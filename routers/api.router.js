@@ -12,4 +12,5 @@ apiRouter.use("/articles", articlesRouter); //GET /api/articles/:article_id
 apiRouter.use("/comments", commentsRouter); // PATCH /api/comments/:comment_id
 apiRouter.route("/").all(sendRoutes); // /api send a list of all available routes
 
+
 module.exports = apiRouter;
