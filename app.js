@@ -3,8 +3,8 @@ const dbConfig = require("./knexfile");
 const knexConstructor = require("knex");
 const knex = knexConstructor(dbConfig);
 const app = express();
+const cors = require("cors");
 const apiRouter = require("./routers/api.router");
-
 
 const {
   handleInternalError,
@@ -12,6 +12,8 @@ const {
   send404,
   handlePSQLError,
 } = require("./controllers/error.controllers");
+
+app.use(cors()); //'This is CORS-enabled for all origins!'
 
 // parse JSON
 app.use(express.json());
