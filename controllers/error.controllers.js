@@ -16,7 +16,7 @@ exports.send404 = (req, res, next) => {
 };
 
 exports.handle405 = (req, res, next) => {
-  res.status(405).send({ msg: "method not allowed" });
+  res.status(405).send({ message: "method not allowed" });
 };
 
 exports.handlePSQLError = (err, req, res, next) => {
@@ -39,7 +39,7 @@ exports.handlePSQLError = (err, req, res, next) => {
 
 exports.handleCustomError = (err, req, res, next) => {
   if (err.status) {
-    res.status(err.status).send({ msg: err.msg });
+    res.status(err.status).send({ message: err.msg });
   } else {
     next(err);
   }
@@ -47,5 +47,5 @@ exports.handleCustomError = (err, req, res, next) => {
 
 exports.handleInternalError = (err, req, res, next) => {
   console.log(err);
-  res.status(500).send({ msg: "Internal server error" });
+  res.status(500).send({ message: "Internal server error" });
 };

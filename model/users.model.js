@@ -34,8 +34,6 @@ exports.insertUser = (body) => {
     .then((result) => {
       if (result.article_id === null) {
       }
-      console.log(result);
-      
       return result[0];
     });
 }; // insert comment by article_id
