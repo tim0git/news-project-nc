@@ -62,7 +62,7 @@ describe("app", () => {
             .post("/api/topics")
             .expect(405)
             .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("method not allowed");
             });
         });
         test("PATCH /api/topics", () => {
@@ -70,7 +70,7 @@ describe("app", () => {
             .patch("/api/topics")
             .expect(405)
             .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("method not allowed");
             });
         });
         test("DELETE/api/topics", () => {
@@ -78,7 +78,7 @@ describe("app", () => {
             .del("/api/topics")
             .expect(405)
             .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("method not allowed");
             });
         });
         test("GET /api/topicz Incorrect Path Spelling Error", () => {
@@ -123,7 +123,7 @@ describe("app", () => {
             .post("/api/users/butter_bridge")
             .expect(405)
             .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("method not allowed");
             });
         });
         test("PATCH /users/:username", () => {
@@ -131,7 +131,7 @@ describe("app", () => {
             .patch("/api/users/butter_bridge")
             .expect(405)
             .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("method not allowed");
             });
         });
         test("DELETE /users/:username", () => {
@@ -139,7 +139,7 @@ describe("app", () => {
             .del("/api/users/butter_bridge")
             .expect(405)
             .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("method not allowed");
             });
         });
         test("expect GET wong username to return 404 resource not found", () => {
@@ -147,7 +147,7 @@ describe("app", () => {
             .get("/api/users/butter_brid")
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
+              expect(result.body.message).toBe("resource not found");
             });
         });
       });
@@ -187,7 +187,7 @@ describe("app", () => {
             .get("/api/articles/999")
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
+              expect(result.body.message).toBe("resource not found");
             });
         });
         // end of article GET
@@ -229,7 +229,7 @@ describe("app", () => {
             .send({ inc_votes: 1 })
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
+              expect(result.body.message).toBe("resource not found");
             });
         });
         test("ERROR when passed incorrect body returns 200 okay votes 100", () => {
@@ -334,7 +334,7 @@ describe("app", () => {
             .get("/api/articles?topic=not-a-topic")
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
+              expect(result.body.message).toBe("resource not found");
             });
         });
         test(" GET `/api/articles?topic=paper`", () => {
@@ -350,7 +350,7 @@ describe("app", () => {
             .get("/api/articles?author=not-an-author")
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
+              expect(result.body.message).toBe("resource not found");
             });
         });
         test("ERROR when passed incorrect author responds with 404 resource not found", () => {
@@ -358,7 +358,7 @@ describe("app", () => {
             .get("/api/articles?author=notKnown")
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toEqual("resource not found");
+              expect(result.body.message).toEqual("resource not found");
             });
         });
         test("ERROR when passed incorrect topic responds with 404 resource not found", () => {
@@ -366,7 +366,7 @@ describe("app", () => {
             .get("/api/articles?topic=notKnown")
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toEqual("resource not found");
+              expect(result.body.message).toEqual("resource not found");
             });
         });
         test("ERROR order by incorrect term", () => {
@@ -374,7 +374,7 @@ describe("app", () => {
             .get("/api/articles?sort_by=author&order=not-asc-or-desc")
             .expect(400)
             .then((result) => {
-              expect(result.body.msg).toBe("bad request");
+              expect(result.body.message).toBe("bad request");
             });
         });
         test("ERROR sort by incorrect term not-a-column", () => {
@@ -430,7 +430,7 @@ describe("app", () => {
             .post("/api/articles/:article_id")
             .expect(405)
             .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("method not allowed");
             });
         });
         test('DELETE "/:article_id"', () => {
@@ -438,7 +438,7 @@ describe("app", () => {
             .del("/api/articles/:article_id")
             .expect(405)
             .then((result) => {
-              expect(result.body.msg).toBe("method not allowed");
+              expect(result.body.message).toBe("method not allowed");
             });
         });
       });
@@ -544,7 +544,7 @@ describe("app", () => {
             .get("/api/articles/99999/comments")
             .expect(404)
             .then((result) => {
-              expect(result.body.msg).toBe("resource not found");
+              expect(result.body.message).toBe("resource not found");
             });
         });
         test("returns 200 [] when id is correct but has no comments", () => {
@@ -581,7 +581,7 @@ describe("app", () => {
           .get("/api/articles/99")
           .expect(404)
           .then((result) => {
-            expect(result.body.msg).toBe("resource not found");
+            expect(result.body.message).toBe("resource not found");
           });
       });
       // end of GET
@@ -592,7 +592,7 @@ describe("app", () => {
           .patch("/api/articles/:article_id/comments")
           .expect(405)
           .then((result) => {
-            expect(result.body.msg).toBe("method not allowed");
+            expect(result.body.message).toBe("method not allowed");
           });
       });
       test('DELETE "/:article_id/comments"', () => {
@@ -600,7 +600,7 @@ describe("app", () => {
           .del("/api/articles/:article_id/comments")
           .expect(405)
           .then((result) => {
-            expect(result.body.msg).toBe("method not allowed");
+            expect(result.body.message).toBe("method not allowed");
           });
       });
     });
@@ -610,7 +610,7 @@ describe("app", () => {
           .post("/api/comments/4")
           .expect(405)
           .then((result) => {
-            expect(result.body.msg).toBe("method not allowed");
+            expect(result.body.message).toBe("method not allowed");
           });
       });
       test("GET /api/comments/:comment_id", () => {
@@ -618,7 +618,7 @@ describe("app", () => {
           .get("/api/comments/4")
           .expect(405)
           .then((result) => {
-            expect(result.body.msg).toBe("method not allowed");
+            expect(result.body.message).toBe("method not allowed");
           });
       });
     });
@@ -658,7 +658,7 @@ describe("app", () => {
           .send({ inc_votes: 1 })
           .expect(404)
           .then((result) => {
-            expect(result.body.msg).toBe("resource not found");
+            expect(result.body.message).toBe("resource not found");
           });
       });
       test("ERROR when passed incorrect body returns 400 bad request", () => {
@@ -711,7 +711,7 @@ describe("app", () => {
           .del("/api/comments/1000")
           .expect(404)
           .then((result) => {
-            expect(result.body.msg).toBe("resource not found");
+            expect(result.body.message).toBe("resource not found");
           });
       });
     });
@@ -744,7 +744,7 @@ describe("FEEDBACK TESTS", () => {
         });
       });
   });
-  
+
   describe("/api", () => {
     describe("/users", () => {
       describe("GET/api/users", () => {
@@ -803,6 +803,5 @@ describe("FEEDBACK TESTS", () => {
     });
     // end of /api
   });
-  
 });
 // end of app
